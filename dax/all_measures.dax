@@ -1,0 +1,336 @@
+// ============================================================
+// FILE: 01_sales_measures.dax
+// PROJECT: Superstore BI Dashboard
+// INSTRUCTIONS: In Power BI Desktop → select Fact_Superstore
+//               table → New Measure → paste each measure
+// ============================================================
+
+// ── CORE SALES MEASURES ──────────────────────────────────────
+
+Total Revenue =
+SUM(Fact_Superstore[Sales])
+
+
+Total Orders =
+DISTINCTCOUNT(Fact_Superstore[Order ID])
+
+
+Total Quantity =
+SUM(Fact_Superstore[Quantity])
+
+
+Avg Order Value =
+DIVIDE([Total Revenue], [Total Orders], 0)
+
+
+Avg Revenue per Customer =
+DIVIDE(
+    [Total Revenue],
+    DISTINCTCOUNT(Fact_Superstore[Customer ID]),
+    0
+)
+
+
+// Revenue share % — respects slicers (ALLSELECTED)
+Revenue Share % =
+DIVIDE(
+    [Total Revenue],
+    CALCULATE([Total Revenue], ALLSELECTED(Dim_Product[Category])),
+    0
+) * 100
+
+
+// ── RANKING MEASURES ─────────────────────────────────────────
+
+Product Revenue Rank =
+RANKX(
+    ALL(Dim_Product[Product Name]),
+    [Total Revenue],
+    ,
+    DESC,
+    Dense
+)
+
+
+Sub-Category Profit Rank =
+RANKX(
+    ALL(Dim_Product[Sub-Category]),
+    [Total Profit],
+    ,
+    DESC,
+    Dense
+)
+
+
+// ── DYNAMIC TITLE MEASURE ────────────────────────────────────
+
+Selected Category Title =
+"Performance: " &
+SELECTEDVALUE(Dim_Product[Category], "All Categories")
+
+
+// ============================================================
+// FILE: 02_profit_measures.dax
+// ============================================================
+
+Total Profit =
+SUM(Fact_Superstore[Profit])
+
+
+Profit Margin % =
+DIVIDE([Total Profit], [Total Revenue], 0) * 100
+
+
+Total Discount Given =
+SUMX(
+    Fact_Superstore,
+    Fact_Superstore[Sales] /
+        (1 - NULLIF(Fact_Superstore[Discount], 0)) *
+        Fact_Superstore[Discount]
+)
+
+
+// Loss-making orders
+Loss Orders =
+CALCULATE(
+    [Total Orders],
+    Fact_Superstore[Profit] < 0
+)
+
+
+Loss Orders % =
+DIVIDE([Loss Orders], [Total Orders], 0) * 100
+
+
+Total Loss Amount =
+CALCULATE(
+    SUM(Fact_Superstore[Profit]),
+    Fact_Superstore[Profit] < 0
+)
+
+
+// Profit vs company average (for conditional formatting)
+Margin vs Company Avg =
+VAR ThisMargin    = [Profit Margin %]
+VAR CompanyMargin = CALCULATE([Profit Margin %], ALL(Dim_Product))
+RETURN ThisMargin - CompanyMargin
+
+
+// Margin band for colour coding
+Margin Band =
+SWITCH(
+    TRUE(),
+    [Profit Margin %] < 0,    "Loss",
+    [Profit Margin %] < 5,    "Low",
+    [Profit Margin %] < 15,   "Medium",
+    "High"
+)
+
+
+// ============================================================
+// FILE: 03_time_intelligence.dax
+// NOTE: Requires Dim_Date marked as Date Table
+// ============================================================
+
+// Year-to-date revenue
+Revenue YTD =
+TOTALYTD([Total Revenue], Dim_Date[Date])
+
+
+// Month-to-date revenue
+Revenue MTD =
+TOTALMTD([Total Revenue], Dim_Date[Date])
+
+
+// Same period last year
+Revenue LY =
+CALCULATE(
+    [Total Revenue],
+    SAMEPERIODLASTYEAR(Dim_Date[Date])
+)
+
+
+// Year-over-year growth %
+YoY Growth % =
+VAR CY = [Total Revenue]
+VAR LY = [Revenue LY]
+RETURN
+    DIVIDE(CY - LY, LY, BLANK()) * 100
+
+
+// Month-over-month growth
+Revenue PM =
+CALCULATE(
+    [Total Revenue],
+    DATEADD(Dim_Date[Date], -1, MONTH)
+)
+
+MoM Growth % =
+VAR CM = [Total Revenue]
+VAR PM = [Revenue PM]
+RETURN
+    DIVIDE(CM - PM, PM, BLANK()) * 100
+
+
+// MoM label for card visual
+MoM Label =
+VAR Pct = [MoM Growth %]
+RETURN
+    IF(
+        ISBLANK(Pct),
+        "—",
+        IF(Pct >= 0,
+            "▲ " & FORMAT(Pct, "0.0") & "%",
+            "▼ " & FORMAT(ABS(Pct), "0.0") & "%"
+        )
+    )
+
+
+// Rolling 12-month revenue
+Revenue Rolling 12M =
+CALCULATE(
+    [Total Revenue],
+    DATESINPERIOD(
+        Dim_Date[Date],
+        LASTDATE(Dim_Date[Date]),
+        -12,
+        MONTH
+    )
+)
+
+
+// Profit YTD
+Profit YTD =
+TOTALYTD([Total Profit], Dim_Date[Date])
+
+
+// Profit LY
+Profit LY =
+CALCULATE(
+    [Total Profit],
+    SAMEPERIODLASTYEAR(Dim_Date[Date])
+)
+
+
+// ============================================================
+// FILE: 04_customer_measures.dax
+// ============================================================
+
+Total Customers =
+DISTINCTCOUNT(Fact_Superstore[Customer ID])
+
+
+// Avg revenue per customer
+Avg Customer Revenue =
+DIVIDE([Total Revenue], [Total Customers], 0)
+
+
+// RFM calculated columns (add to Fact_Superstore or a Customer summary table)
+// First create a calculated table:
+//
+// Customer_RFM =
+// SUMMARIZE(
+//     Fact_Superstore,
+//     Fact_Superstore[Customer ID],
+//     "Last Order Date",   MAX(Fact_Superstore[Order Date]),
+//     "Order Count",       DISTINCTCOUNT(Fact_Superstore[Order ID]),
+//     "Total Revenue",     SUM(Fact_Superstore[Sales])
+// )
+//
+// Then add calculated columns to Customer_RFM:
+
+// Recency Days (calculated column on Customer_RFM table)
+Recency Days =
+DATEDIFF(
+    Customer_RFM[Last Order Date],
+    TODAY(),
+    DAY
+)
+
+// RFM Segment (calculated column on Customer_RFM table)
+RFM Segment =
+VAR R = Customer_RFM[R Score]
+VAR F = Customer_RFM[F Score]
+RETURN
+SWITCH(
+    TRUE(),
+    R >= 3 && F >= 3, "Champion",
+    R >= 3 && F >= 2, "Loyal",
+    R = 4 && F <= 2,  "New Customer",
+    R <= 2 && F >= 3, "At Risk",
+    R <= 2 && F <= 2, "Lapsed",
+    "Needs Attention"
+)
+
+
+// Customer rank by revenue
+Customer Revenue Rank =
+RANKX(
+    ALL(Fact_Superstore[Customer ID]),
+    [Total Revenue],
+    ,
+    DESC,
+    Dense
+)
+
+
+// ============================================================
+// FILE: 05_dynamic_measures.dax
+// ============================================================
+
+// What-If: Discount Threshold Impact
+// Create parameter: "Discount Threshold"
+// Min: 0, Max: 0.8, Increment: 0.05, Default: 0.2
+
+Revenue Above Discount Threshold =
+CALCULATE(
+    [Total Revenue],
+    Fact_Superstore[Discount] <=
+        'Discount Threshold'[Discount Threshold Value]
+)
+
+Profit Above Discount Threshold =
+CALCULATE(
+    [Total Profit],
+    Fact_Superstore[Discount] <=
+        'Discount Threshold'[Discount Threshold Value]
+)
+
+Projected Profit Improvement =
+[Total Profit] - [Profit Above Discount Threshold]
+
+
+// Dynamic KPI selector
+// Create disconnected table "KPI_Menu":
+// ID | KPI Name
+// 1  | Revenue
+// 2  | Profit
+// 3  | Margin %
+// 4  | Orders
+// 5  | Avg Order Value
+
+Selected KPI =
+SWITCH(
+    SELECTEDVALUE(KPI_Menu[ID], 1),
+    1, [Total Revenue],
+    2, [Total Profit],
+    3, [Profit Margin %],
+    4, [Total Orders],
+    5, [Avg Order Value],
+    BLANK()
+)
+
+Selected KPI Name =
+SELECTEDVALUE(KPI_Menu[KPI Name], "Revenue")
+
+
+// Colour measure for conditional formatting
+KPI Colour =
+SWITCH(
+    SELECTEDVALUE(KPI_Menu[ID], 1),
+    1, IF([YoY Growth %] >= 0, "#1D9E75", "#E24B4A"),
+    2, IF([Total Profit] >= 0, "#1D9E75", "#E24B4A"),
+    3, IF([Profit Margin %] >= 10, "#1D9E75",
+         IF([Profit Margin %] >= 0, "#EF9F27", "#E24B4A")),
+    "#185FA5"
+)
