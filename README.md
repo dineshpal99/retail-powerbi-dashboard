@@ -418,4 +418,4 @@ superstore-powerbi/
 
 ---
 
-*Built by: [Your Name] · Power BI Desktop · Sample Superstore (Kaggle) · 2024*
+*Built by: Dinesh Pal · Power BI Desktop · Sample Superstore (Kaggle) · 2024*
