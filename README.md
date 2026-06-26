@@ -9,11 +9,11 @@
 ## 📌 Project Overview
 
 An end-to-end Power BI dashboard analysing **4 years of US retail sales data** (2014–2017)
-for the confidential retail client dataset. The dashboard covers revenue performance, product
+for a retail client dataset. The dashboard covers revenue performance, product
 profitability, regional analysis, customer intelligence, and an interactive discount
 impact simulator built using a What-If parameter.
 
-> **Dataset:** Confidential retail client dataset — 9,994 rows · 21 columns · 2014–2017  
+> **Dataset:** Retail client dataset — 9,994 rows · 21 columns · 2014–2017  
 > **Tools:** Power BI Desktop · Power Query (M) · DAX  
 > **Model:** Star schema — 5 tables (1 fact + 4 dimensions)
 
