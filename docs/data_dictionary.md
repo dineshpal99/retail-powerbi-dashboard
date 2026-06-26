@@ -102,6 +102,3 @@
 | DiscountBand | SWITCH(TRUE(), Discount=0, "0%", ...) | Groups orders into 6 discount buckets |
 | DiscountBandSort | SWITCH(TRUE(), Discount=0, 1, ...) | Controls sort order of DiscountBand |
 
----
-
-*Last updated: 2024*
