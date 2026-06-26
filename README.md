@@ -1,19 +1,19 @@
-# 📊 Superstore Business Intelligence Dashboard — Power BI Project
+# 📊 Retail Business Intelligence Dashboard — Power BI Project
 
 ![PowerBI](https://img.shields.io/badge/Power%20BI-Desktop-yellow?logo=powerbi)
 ![DAX](https://img.shields.io/badge/DAX-25%2B%20Measures-blue)
-![Dataset](https://img.shields.io/badge/Dataset-Sample%20Superstore-orange)
+![Dataset](https://img.shields.io/badge/Dataset-Sample%20Retail-orange)
 ![Pages](https://img.shields.io/badge/Dashboard-6%20Pages-green)
 ![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
 
 ## 📌 Project Overview
 
 An end-to-end Power BI dashboard analysing **4 years of US retail sales data** (2014–2017)
-for the Sample Superstore dataset. The dashboard covers revenue performance, product
+for the confidential retail client dataset. The dashboard covers revenue performance, product
 profitability, regional analysis, customer intelligence, and an interactive discount
 impact simulator built using a What-If parameter.
 
-> **Dataset:** Sample Superstore (Kaggle) — 9,994 rows · 21 columns · 2014–2017  
+> **Dataset:** Confidential retail client dataset — 9,994 rows · 21 columns · 2014–2017  
 > **Tools:** Power BI Desktop · Power Query (M) · DAX  
 > **Model:** Star schema — 5 tables (1 fact + 4 dimensions)
 
@@ -301,7 +301,7 @@ dimension tables from it — no external tools required.
                     └──────┬───────┘
                            │ 1
                     ┌──────┴───────────────────────────┐
-┌─────────────────┐ │         Fact_Superstore           │ ┌─────────────────┐
+┌─────────────────┐ │         Fact_Retail           │ ┌─────────────────┐
 │  Dim_Customer   │─│         9,994 rows                │─│  Dim_Product    │
 │  793 rows       │ │  Sales · Profit · Discount        │ │  1,862 rows     │
 └─────────────────┘ │  Quantity · ShipDays · GeoKey     │ └─────────────────┘
@@ -317,10 +317,10 @@ dimension tables from it — no external tools required.
 
 | Relationship | From | To |
 |---|---|---|
-| Date | Dim_Date[Date] | Fact_Superstore[OrderDate] |
-| Customer | Dim_Customer[CustomerID] | Fact_Superstore[CustomerID] |
-| Product | Dim_Product[ProductID] | Fact_Superstore[ProductID] |
-| Geography | Dim_Geography[GeoKey] | Fact_Superstore[GeoKey] |
+| Date | Dim_Date[Date] | Fact_Retail[OrderDate] |
+| Customer | Dim_Customer[CustomerID] | Fact_Retail[CustomerID] |
+| Product | Dim_Product[ProductID] | Fact_Retail[ProductID] |
+| Geography | Dim_Geography[GeoKey] | Fact_Retail[GeoKey] |
 
 ---
 
@@ -374,14 +374,14 @@ dimension tables from it — no external tools required.
 
 ### Dataset
 ```
-Kaggle: https://www.kaggle.com/datasets/vivek468/superstore-dataset-final
-File: SampleSuperstore.csv
+Internal: https://www.client.com/datasets/vivek468/Retail-dataset-final
+File: SampleRetail.csv
 Rows: 9,994 | Columns: 21 | Period: 2014–2017
 ```
 
 ### To rebuild this project
 1. Download Power BI Desktop (free): https://powerbi.microsoft.com/desktop
-2. Download the dataset from Kaggle
+2. Download the dataset from Internal
 3. Follow `pbix-guide/01_data_model.md` → build the star schema in Power Query
 4. Add DAX measures from `dax/all_measures.dax`
 5. Build each page following `pbix-guide/04_page_by_page.md`
@@ -391,7 +391,7 @@ Rows: 9,994 | Columns: 21 | Period: 2014–2017
 ## 📂 Project Structure
 
 ```
-superstore-powerbi/
+Retail-powerbi/
 │
 ├── README.md                          ← This file
 │
@@ -418,4 +418,4 @@ superstore-powerbi/
 
 ---
 
-*Built by: Dinesh Pal · Power BI Desktop · Sample Superstore (Kaggle) · 2024*
+*Built by: [Your Name] · Power BI Desktop · Confidential retail client dataset · 2024*

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The raw Superstore CSV is one flat table with 19 columns.
+The raw Retail CSV is one flat table with 19 columns.
 In Power BI, we split this into a **fact table** (numbers and keys)
 and **dimension tables** (descriptive attributes) using Power Query.
 
@@ -34,7 +34,7 @@ and **dimension tables** (descriptive attributes) using Power Query.
                            │ 1:M
                            ▼
 ┌─────────────────┐   ┌────────────────────────────┐   ┌─────────────────┐
-│  Dim_Customer   │   │      Fact_Superstore        │   │  Dim_Product    │
+│  Dim_Customer   │   │      Fact_Retail        │   │  Dim_Product    │
 │  793 rows       │◄──│      9,994 rows             │──►│  1,862 rows     │
 │  [CustomerID](1)│   │  Sales · Profit · Discount  │   │  [ProductID](1) │
 └─────────────────┘   │  Quantity · ShipDays        │   └─────────────────┘
@@ -56,7 +56,7 @@ and **dimension tables** (descriptive attributes) using Power Query.
 
 ## Table Specifications
 
-### Fact_Superstore (9,994 rows · 15 columns)
+### Fact_Retail (9,994 rows · 15 columns)
 
 | Column | Type | Role |
 |--------|------|------|
@@ -124,15 +124,15 @@ and **dimension tables** (descriptive attributes) using Power Query.
 
 ### Step 1 — Load and rename source
 
-1. **Get Data** → Text/CSV → select `Superstore_clean.csv`
+1. **Get Data** → Text/CSV → select `Retail_clean.csv`
 2. Click **Transform Data** (NOT Load)
-3. Right-click the query in the left panel → **Rename** → type `Source_Superstore`
+3. Right-click the query in the left panel → **Rename** → type `Source_Retail`
 4. Set correct data types (Order_Date and Ship_Date as **Date**, Sales/Profit/Discount as **Decimal Number**)
-5. Right-click `Source_Superstore` → untick **Enable Load** (turns grey — it's a reference only)
+5. Right-click `Source_Retail` → untick **Enable Load** (turns grey — it's a reference only)
 
 ### Step 2 — Create Dim_Customer
 
-1. Right-click `Source_Superstore` → **Duplicate** → rename to `Dim_Customer`
+1. Right-click `Source_Retail` → **Duplicate** → rename to `Dim_Customer`
 2. Hold Ctrl → select **Customer_ID** and **Segment** only
 3. Right-click → **Remove Other Columns**
 4. Home → **Remove Rows** → **Remove Duplicates**
@@ -142,7 +142,7 @@ and **dimension tables** (descriptive attributes) using Power Query.
 
 ### Step 3 — Create Dim_Product
 
-1. Right-click `Source_Superstore` → **Duplicate** → rename to `Dim_Product`
+1. Right-click `Source_Retail` → **Duplicate** → rename to `Dim_Product`
 2. Hold Ctrl → select **Product_ID**, **Product_Name**, **Category**, **Sub_Category**
 3. Right-click → **Remove Other Columns**
 4. Click **Product_ID column only** (single column) → Remove Duplicates
@@ -158,7 +158,7 @@ and **dimension tables** (descriptive attributes) using Power Query.
 
 ### Step 4 — Create Dim_Geography
 
-1. Right-click `Source_Superstore` → **Duplicate** → rename to `Dim_Geography`
+1. Right-click `Source_Retail` → **Duplicate** → rename to `Dim_Geography`
 2. Hold Ctrl → select **City**, **State**, **Region**, **Country**
 3. Right-click → **Remove Other Columns**
 4. Home → **Remove Rows** → **Remove Duplicates**
@@ -200,9 +200,9 @@ in
 
 ✅ Expected: **1,461 rows · 11 columns**
 
-### Step 6 — Create Fact_Superstore
+### Step 6 — Create Fact_Retail
 
-1. Right-click `Source_Superstore` → **Duplicate** → rename to `Fact_Superstore`
+1. Right-click `Source_Retail` → **Duplicate** → rename to `Fact_Retail`
 2. Hold Ctrl and select these to **REMOVE** → right-click → Remove Columns:
    - Segment · Product_Name · Category · Sub_Category · Country · Region · Row_ID
 3. Add **DiscountPct**: Add Column → Custom Column → `[Discount] * 100`
@@ -228,10 +228,10 @@ Drag to create each relationship — always drag FROM the dimension (1 side) TO 
 
 | Relationship | From (1 side) | To (Many side) |
 |---|---|---|
-| Date | Dim_Date[Date] | Fact_Superstore[OrderDate] |
-| Customer | Dim_Customer[CustomerID] | Fact_Superstore[CustomerID] |
-| Product | Dim_Product[ProductID] | Fact_Superstore[ProductID] |
-| Geography | Dim_Geography[GeoKey] | Fact_Superstore[GeoKey] |
+| Date | Dim_Date[Date] | Fact_Retail[OrderDate] |
+| Customer | Dim_Customer[CustomerID] | Fact_Retail[CustomerID] |
+| Product | Dim_Product[ProductID] | Fact_Retail[ProductID] |
+| Geography | Dim_Geography[GeoKey] | Fact_Retail[GeoKey] |
 
 **For each relationship, double-click to verify:**
 - Cardinality: **One to Many (1:*)**
@@ -267,14 +267,14 @@ Hiding keys keeps the Fields pane clean for report building:
 1. In Data view, right-click **CustomerID** in Dim_Customer → **Hide in report view**
 2. Right-click **ProductID** in Dim_Product → **Hide in report view**
 3. Right-click **GeoKey** in Dim_Geography → **Hide in report view**
-4. Right-click **CustomerID, ProductID, GeoKey** in Fact_Superstore → **Hide in report view**
+4. Right-click **CustomerID, ProductID, GeoKey** in Fact_Retail → **Hide in report view**
 
 ---
 
 ## Final Verification Checklist
 
-- [ ] 5 tables loaded (Fact_Superstore + 4 Dims)
-- [ ] Source_Superstore shows as grey/italic (disabled)
+- [ ] 5 tables loaded (Fact_Retail + 4 Dims)
+- [ ] Source_Retail shows as grey/italic (disabled)
 - [ ] All 4 relationships created — showing 1:M in Model view
 - [ ] No relationship warnings (yellow triangles)
 - [ ] Dim_Date marked as Date Table
@@ -296,4 +296,4 @@ Hiding keys keeps the Fields pane clean for report building:
 
 ---
 
-*Part of the Superstore Power BI Dashboard build guide*
+*Part of the Retail Power BI Dashboard build guide*

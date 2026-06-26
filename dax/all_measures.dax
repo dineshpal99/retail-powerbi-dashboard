@@ -1,22 +1,22 @@
 // ============================================================
 // FILE: 01_sales_measures.dax
-// PROJECT: Superstore BI Dashboard
-// INSTRUCTIONS: In Power BI Desktop → select Fact_Superstore
+// PROJECT: Retail BI Dashboard
+// INSTRUCTIONS: In Power BI Desktop → select Fact_Retail
 //               table → New Measure → paste each measure
 // ============================================================
 
 // ── CORE SALES MEASURES ──────────────────────────────────────
 
 Total Revenue =
-SUM(Fact_Superstore[Sales])
+SUM(Fact_Retail[Sales])
 
 
 Total Orders =
-DISTINCTCOUNT(Fact_Superstore[Order ID])
+DISTINCTCOUNT(Fact_Retail[Order ID])
 
 
 Total Quantity =
-SUM(Fact_Superstore[Quantity])
+SUM(Fact_Retail[Quantity])
 
 
 Avg Order Value =
@@ -26,7 +26,7 @@ DIVIDE([Total Revenue], [Total Orders], 0)
 Avg Revenue per Customer =
 DIVIDE(
     [Total Revenue],
-    DISTINCTCOUNT(Fact_Superstore[Customer ID]),
+    DISTINCTCOUNT(Fact_Retail[Customer ID]),
     0
 )
 
@@ -74,7 +74,7 @@ SELECTEDVALUE(Dim_Product[Category], "All Categories")
 // ============================================================
 
 Total Profit =
-SUM(Fact_Superstore[Profit])
+SUM(Fact_Retail[Profit])
 
 
 Profit Margin % =
@@ -83,10 +83,10 @@ DIVIDE([Total Profit], [Total Revenue], 0) * 100
 
 Total Discount Given =
 SUMX(
-    Fact_Superstore,
-    Fact_Superstore[Sales] /
-        (1 - NULLIF(Fact_Superstore[Discount], 0)) *
-        Fact_Superstore[Discount]
+    Fact_Retail,
+    Fact_Retail[Sales] /
+        (1 - NULLIF(Fact_Retail[Discount], 0)) *
+        Fact_Retail[Discount]
 )
 
 
@@ -94,7 +94,7 @@ SUMX(
 Loss Orders =
 CALCULATE(
     [Total Orders],
-    Fact_Superstore[Profit] < 0
+    Fact_Retail[Profit] < 0
 )
 
 
@@ -104,8 +104,8 @@ DIVIDE([Loss Orders], [Total Orders], 0) * 100
 
 Total Loss Amount =
 CALCULATE(
-    SUM(Fact_Superstore[Profit]),
-    Fact_Superstore[Profit] < 0
+    SUM(Fact_Retail[Profit]),
+    Fact_Retail[Profit] < 0
 )
 
 
@@ -217,7 +217,7 @@ CALCULATE(
 // ============================================================
 
 Total Customers =
-DISTINCTCOUNT(Fact_Superstore[Customer ID])
+DISTINCTCOUNT(Fact_Retail[Customer ID])
 
 
 // Avg revenue per customer
@@ -225,16 +225,16 @@ Avg Customer Revenue =
 DIVIDE([Total Revenue], [Total Customers], 0)
 
 
-// RFM calculated columns (add to Fact_Superstore or a Customer summary table)
+// RFM calculated columns (add to Fact_Retail or a Customer summary table)
 // First create a calculated table:
 //
 // Customer_RFM =
 // SUMMARIZE(
-//     Fact_Superstore,
-//     Fact_Superstore[Customer ID],
-//     "Last Order Date",   MAX(Fact_Superstore[Order Date]),
-//     "Order Count",       DISTINCTCOUNT(Fact_Superstore[Order ID]),
-//     "Total Revenue",     SUM(Fact_Superstore[Sales])
+//     Fact_Retail,
+//     Fact_Retail[Customer ID],
+//     "Last Order Date",   MAX(Fact_Retail[Order Date]),
+//     "Order Count",       DISTINCTCOUNT(Fact_Retail[Order ID]),
+//     "Total Revenue",     SUM(Fact_Retail[Sales])
 // )
 //
 // Then add calculated columns to Customer_RFM:
@@ -266,7 +266,7 @@ SWITCH(
 // Customer rank by revenue
 Customer Revenue Rank =
 RANKX(
-    ALL(Fact_Superstore[Customer ID]),
+    ALL(Fact_Retail[Customer ID]),
     [Total Revenue],
     ,
     DESC,
@@ -285,14 +285,14 @@ RANKX(
 Revenue Above Discount Threshold =
 CALCULATE(
     [Total Revenue],
-    Fact_Superstore[Discount] <=
+    Fact_Retail[Discount] <=
         'Discount Threshold'[Discount Threshold Value]
 )
 
 Profit Above Discount Threshold =
 CALCULATE(
     [Total Profit],
-    Fact_Superstore[Discount] <=
+    Fact_Retail[Discount] <=
         'Discount Threshold'[Discount Threshold Value]
 )
 

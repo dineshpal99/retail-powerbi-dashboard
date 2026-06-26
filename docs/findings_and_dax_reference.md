@@ -56,15 +56,15 @@
 ### Core Sales Measures
 
 ```dax
-Total Revenue = SUM(Fact_Superstore[Sales])
+Total Revenue = SUM(Fact_Retail[Sales])
 
-Total Profit = SUM(Fact_Superstore[Profit])
+Total Profit = SUM(Fact_Retail[Profit])
 
-Total Orders = DISTINCTCOUNT(Fact_Superstore[OrderID])
+Total Orders = DISTINCTCOUNT(Fact_Retail[OrderID])
 
-Total Quantity = SUM(Fact_Superstore[Quantity])
+Total Quantity = SUM(Fact_Retail[Quantity])
 
-Total Customers = DISTINCTCOUNT(Fact_Superstore[CustomerID])
+Total Customers = DISTINCTCOUNT(Fact_Retail[CustomerID])
 
 Profit Margin % = DIVIDE([Total Profit], [Total Revenue], 0)
 
@@ -83,7 +83,7 @@ Loss Making Customers =
 CALCULATE(
     [Total Customers],
     FILTER(
-        VALUES(Fact_Superstore[CustomerID]),
+        VALUES(Fact_Retail[CustomerID]),
         CALCULATE([Total Profit]) < 0
     )
 )
@@ -104,7 +104,7 @@ VAR LatestYear = YEAR(LatestDate)
 VAR LatestMonthNum = MONTH(LatestDate)
 RETURN
     CALCULATE(
-        SUM(Fact_Superstore[Sales]),
+        SUM(Fact_Retail[Sales]),
         YEAR(Dim_Date[Date]) = LatestYear,
         MONTH(Dim_Date[Date]) = LatestMonthNum
     )
@@ -143,19 +143,19 @@ RETURN
     DIVIDE(CM - PM, PM, BLANK()) * 100
 
 MoM Growth Label =
-VAR LatestDate = CALCULATE(MAX(Fact_Superstore[OrderDate]), ALL(Fact_Superstore))
+VAR LatestDate = CALCULATE(MAX(Fact_Retail[OrderDate]), ALL(Fact_Retail))
 VAR LatestYear = YEAR(LatestDate)
 VAR LatestMonthNum = MONTH(LatestDate)
 VAR CurrentRev =
     CALCULATE(
-        SUM(Fact_Superstore[Sales]),
+        SUM(Fact_Retail[Sales]),
         YEAR(Dim_Date[Date]) = LatestYear,
         MONTH(Dim_Date[Date]) = LatestMonthNum
     )
 VAR PriorDate = EDATE(LatestDate, -1)
 VAR PriorRev =
     CALCULATE(
-        SUM(Fact_Superstore[Sales]),
+        SUM(Fact_Retail[Sales]),
         YEAR(Dim_Date[Date]) = YEAR(PriorDate),
         MONTH(Dim_Date[Date]) = MONTH(PriorDate)
     )
@@ -217,8 +217,8 @@ RETURN ThisMargin - CompanyMargin
 
 Profit Above Cap =
 CALCULATE(
-    SUM(Fact_Superstore[Profit]),
-    Fact_Superstore[Discount] <=
+    SUM(Fact_Retail[Profit]),
+    Fact_Retail[Discount] <=
         SELECTEDVALUE('Discount Cap'[Discount Cap Value]) / 100
 )
 
@@ -241,4 +241,4 @@ Projected Profit Improvement =
 
 ---
 
-*Document maintained by: Dinesh Pal
+*Document maintained by: [Your Name] | Last updated: 2024*

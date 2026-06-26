@@ -1,6 +1,6 @@
-# Data Dictionary — Superstore Power BI Dashboard
+# Data Dictionary — Retail Power BI Dashboard
 
-## Source: Sample Superstore (Kaggle)
+## Source: Retail (client)
 
 **Period:** January 2014 – December 2017  
 **Rows:** 9,994  
@@ -10,7 +10,7 @@
 
 ---
 
-## Fact_Superstore (9,994 rows)
+## Fact_Retail (9,994 rows)
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -95,11 +95,13 @@
 
 ---
 
-## Calculated Columns in Fact_Superstore
+## Calculated Columns in Fact_Retail
 
 | Column | Formula (DAX) | Purpose |
 |--------|---------------|---------|
 | DiscountBand | SWITCH(TRUE(), Discount=0, "0%", ...) | Groups orders into 6 discount buckets |
 | DiscountBandSort | SWITCH(TRUE(), Discount=0, 1, ...) | Controls sort order of DiscountBand |
 
+---
 
+*Last updated: 2024*

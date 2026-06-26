@@ -1,6 +1,6 @@
 # Power Query Transformation Steps
 
-## Superstore Power BI Dashboard
+## Retail Power BI Dashboard
 
 All transformations are done inside Power BI Desktop's Power Query Editor.
 Load the original CSV **once** — then duplicate it to create each dimension table.
@@ -9,14 +9,14 @@ Load the original CSV **once** — then duplicate it to create each dimension ta
 
 ## How to Open Power Query
 
-1. Power BI Desktop → **Get Data** → **Text/CSV** → select `Superstore_clean.csv`
+1. Power BI Desktop → **Get Data** → **Text/CSV** → select `Retail_clean.csv`
 2. Preview appears → click **Transform Data** (NOT Load)
 3. Power Query Editor opens with one query named after your file
-4. Rename it: right-click → **Rename** → type `Source_Superstore`
+4. Rename it: right-click → **Rename** → type `Source_Retail`
 
 ---
 
-## Step 1 — Set correct data types on Source_Superstore
+## Step 1 — Set correct data types on Source_Retail
 
 Set types explicitly — never trust auto-detect:
 
@@ -35,9 +35,9 @@ Set types explicitly — never trust auto-detect:
 
 ---
 
-## Step 2 — Disable load on Source_Superstore
+## Step 2 — Disable load on Source_Retail
 
-Right-click **Source_Superstore** in the left Queries panel → untick **Enable Load**
+Right-click **Source_Retail** in the left Queries panel → untick **Enable Load**
 
 The query name turns grey/italic. This means it acts as a base reference for all other queries but does NOT load into your Power BI model as a visible table.
 
@@ -45,7 +45,7 @@ The query name turns grey/italic. This means it acts as a base reference for all
 
 ## Step 3 — Create Dim_Customer
 
-1. Right-click **Source_Superstore** → **Duplicate**
+1. Right-click **Source_Retail** → **Duplicate**
 2. Rename the new query to **Dim_Customer**
 3. Hold **Ctrl** → click **Customer_ID** and **Segment** column headers
 4. Right-click → **Remove Other Columns** (only these 2 remain)
@@ -58,7 +58,7 @@ The query name turns grey/italic. This means it acts as a base reference for all
 
 ## Step 4 — Create Dim_Product
 
-1. Right-click **Source_Superstore** → **Duplicate** → rename to **Dim_Product**
+1. Right-click **Source_Retail** → **Duplicate** → rename to **Dim_Product**
 2. Hold Ctrl → click: **Product_ID**, **Product_Name**, **Category**, **Sub_Category**
 3. Right-click → **Remove Other Columns**
 4. Click **Product_ID** column header only (single column, not Ctrl)
@@ -76,7 +76,7 @@ The query name turns grey/italic. This means it acts as a base reference for all
 
 ## Step 5 — Create Dim_Geography
 
-1. Right-click **Source_Superstore** → **Duplicate** → rename to **Dim_Geography**
+1. Right-click **Source_Retail** → **Duplicate** → rename to **Dim_Geography**
 2. Hold Ctrl → click: **City**, **State**, **Region**, **Country**
 3. Right-click → **Remove Other Columns**
 4. Home → **Remove Rows** → **Remove Duplicates**
@@ -156,9 +156,9 @@ in
 
 ---
 
-## Step 7 — Create Fact_Superstore
+## Step 7 — Create Fact_Retail
 
-1. Right-click **Source_Superstore** → **Duplicate** → rename to **Fact_Superstore**
+1. Right-click **Source_Retail** → **Duplicate** → rename to **Fact_Retail**
 2. Hold Ctrl and select these columns to **REMOVE**:
    - Segment (lives in Dim_Customer)
    - Product_Name, Category, Sub_Category (live in Dim_Product)
@@ -197,12 +197,12 @@ Before applying, check row counts by clicking each query in the left panel:
 
 | Query | Expected Rows |
 |-------|--------------|
-| Fact_Superstore | 9,994 |
+| Fact_Retail | 9,994 |
 | Dim_Customer | 793 |
 | Dim_Product | 1,862 |
 | Dim_Geography | 604 |
 | Dim_Date | 1,461 |
-| Source_Superstore | Greyed out (disabled) |
+| Source_Retail | Greyed out (disabled) |
 
 Click **Close & Apply** (top-left of Home ribbon) to load all 5 tables into the model.
 
@@ -215,8 +215,8 @@ Click **Close & Apply** (top-left of Home ribbon) to load all 5 tables into the 
 | Duplicate ProductID relationship error | Remove Duplicates run on all columns instead of ProductID only | Go back to Dim_Product → select only ProductID column → Remove Duplicates again |
 | YearMonth chart sorting alphabetically | Sort by Column not set | Data view → Dim_Date → click YearMonth → Column tools → Sort by column → YearMonthSort |
 | GeoKey relationship has blanks | GeoKey formula differs between fact and dim | Check both use exactly `[City] & "\|" & [State]` with no extra spaces |
-| Source_Superstore still visible in Fields | Enable Load not disabled | Right-click Source_Superstore in Power Query → untick Enable Load |
+| Source_Retail still visible in Fields | Enable Load not disabled | Right-click Source_Retail in Power Query → untick Enable Load |
 
 ---
 
-*Part of the Superstore Power BI Dashboard build guide*
+*Part of the Retail Power BI Dashboard build guide*
