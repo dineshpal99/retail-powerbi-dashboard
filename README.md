@@ -418,4 +418,4 @@ Retail-powerbi/
 
 ---
 
-*Built by: [Your Name] · Power BI Desktop · Confidential retail client dataset · 2024*
+*Built by: Dinesh Pal · Power BI Desktop · Retail client dataset
